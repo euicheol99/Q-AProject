@@ -12,6 +12,7 @@ const GlobalStyle = createGlobalStyle`
     background-color: ${({ theme }) => theme.background};
     color: ${({ theme }) => theme.text};
     transition: all 0.3s;
+    height: 100%;
   }
 
   a {
