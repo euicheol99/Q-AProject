@@ -1,0 +1,99 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "userId": "admin",
+      "password": "1234",
+      "name": "관리자",
+      "email": "admin@naver.com"
+    },
+    {
+      "userId": "ronald",
+      "password": "dmlcjf6265",
+      "confirmPassword": "dmlcjf6265",
+      "name": "정의철",
+      "email": "ronald@naver.com",
+      "id": "4996"
+    },
+    {
+      "id": "86f1",
+      "userId": "rororo",
+      "password": "rororo123",
+      "confirmPassword": "rororo123",
+      "name": "로로로",
+      "email": "rororo@naver.com"
+    }
+  ],
+  "posts": [
+    {
+      "id": "1",
+      "userId": "admin",
+      "title": "리액트가 너무 어렵네요",
+      "stack": "리액트",
+      "content": "괄호 처리가 아직 익숙하지가 않습니다. 어떻게 해야할까요?",
+      "createdAt": "2025-05-05"
+    },
+    {
+      "id": "2",
+      "title": "자바어려워요",
+      "userId": "ronald",
+      "stack": "자바",
+      "content": "자바를 어떻게 잡아야할까요?",
+      "createdAt": "2025-05-06"
+    },
+    {
+      "id": "3",
+      "title": "데이터베이스 질문이 있습니다.",
+      "content": "과연 정규화란 무엇일까요?",
+      "stack": "데이터베이스",
+      "userId": "ronald",
+      "createdAt": "2025-05-06"
+    },
+    {
+      "id": "4",
+      "title": "오버라이딩은 뭔가요",
+      "content": "너무 궁금하네요",
+      "stack": "자바",
+      "userId": "admin",
+      "createdAt": "2025-05-06"
+    },
+    {
+      "id": "5",
+      "title": "자바스크립트와 자바는 무슨 관계인가요?",
+      "content": "너무 궁금합니다",
+      "stack": "자바스크립트",
+      "userId": "admin",
+      "createdAt": "2025-05-06"
+    }
+  ],
+  "comments": [
+    {
+      "id": "1",
+      "postId": 3,
+      "userId": "ronald",
+      "content": "데이터베이스 정규화는 데이터베이스 내의 데이터 구조를 조직화하고 최적화하는 과정입니다.정규화를 하는 목적은 데이터 중복을 제거하고, 효율성을 향상시키며, 데이터 무결성을 보장하기 위함입니다.",
+      "createdAt": "2025-05-06"
+    },
+    {
+      "id": "bdbf",
+      "postId": 3,
+      "userId": "ronald",
+      "createdAt": "2025-05-06",
+      "content": "저도 이 부분 너무 헷갈려요 ㅠㅠ"
+    },
+    {
+      "id": "81d7",
+      "postId": 5,
+      "userId": "ronald",
+      "createdAt": "2025-05-06",
+      "content": "좋은 관계입니다."
+    },
+    {
+      "id": "8190",
+      "postId": 5,
+      "userId": "ronald",
+      "createdAt": "2025-05-06",
+      "content": "이름만 비슷한겁니다.둘은 아무 연관이 없어요"
+    }
+  ]
+}

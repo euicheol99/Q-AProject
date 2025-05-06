@@ -1,17 +1,138 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { FaUser } from "react-icons/fa";
-import { RiLockPasswordFill } from "react-icons/ri";
-import { IoMdMail } from "react-icons/io";
-import { IoPersonCircle } from "react-icons/io5";
-import { FaComputer } from "react-icons/fa6";
+import { FaUser } from 'react-icons/fa';
+import { RiLockPasswordFill } from 'react-icons/ri';
+import { IoMdMail } from 'react-icons/io';
+import { IoPersonCircle } from 'react-icons/io5';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+
+const schema = yup.object({
+  userId: yup.string().min(5, '아이디는 5자 이상이어야 합니다.').required('아이디를 입력하세요.'),
+  name: yup.string().required('이름은 필수입니다.'),
+  password: yup
+    .string()
+    .min(7, '비밀번호는 7자 이상이어야 합니다.')
+    .max(15, '비밀번호는 15자 이하여야 합니다.')
+    .required('비밀번호를 입력하세요.'),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref('password'), null], '비밀번호가 일치하지 않습니다.')
+    .required('비밀번호 확인을 입력하세요.'),
+  email: yup.string().email('올바른 이메일 형식이 아닙니다.').required('이메일을 입력하세요.'),
+});
+
+const Registration = () => {
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    mode: 'onChange',
+  });
+
+  const checkDuplicateId = async () => {
+    const id = getValues('userId');
+  
+    if (!id || id.length < 5) {
+      setError('userId', { message: '5자 이상 입력 후 중복확인을 눌러주세요.' });
+      return;
+    }
+  
+    try {
+      const res = await fetch(`http://localhost:3001/users?userId=${id}`);
+      const data = await res.json();
+  
+      const isDuplicate = data.length > 0;
+  
+      if (isDuplicate) {
+        setError('userId', { message: '이미 사용 중인 아이디입니다.' });
+      } else {
+        clearErrors('userId');
+        alert('사용 가능한 아이디입니다!');
+      }
+    } catch (err) {
+      setError('userId', { message: '서버 요청 실패' });
+    }
+  };
+  
+
+  const onSubmit = async (data) => {
+    const res = await fetch('http://localhost:3001/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok) {
+      alert('회원가입 완료!');
+      navigator('/');
+    } else {
+      alert('회원가입 실패');
+    }
+  };
+
+  const navigator = useNavigate();
+
+  const goHome = () => {
+    navigator('/');
+  };
+
+  return (
+    <Container>
+      <Wrapper>
+        <Title>회원가입</Title>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <FormRow>
+            <IoPersonCircle size={25} />
+            <Input type="text" placeholder="아이디(최소 5자~20자)" {...register('userId')} />
+            <DuplicateIdButton onClick={checkDuplicateId}>중복체크</DuplicateIdButton>
+          </FormRow>
+          {errors.userId && <ErrorText>{errors.userId.message}</ErrorText>}
+          <FormRow>
+            <RiLockPasswordFill size={25} />
+            <Input type="password" placeholder="비밀번호" {...register('password')} />
+          </FormRow>
+          {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
+          <FormRow>
+            <RiLockPasswordFill size={25} />
+            <Input type="password" placeholder="비밀번호 확인"  />
+          </FormRow>
+          {errors.confirmPassword && <ErrorText>{errors.confirmPassword.message}</ErrorText>}
+          <FormRow>
+            <FaUser size={25} />
+            <Input type="text" placeholder="이름" {...register('name')} />
+          </FormRow>
+          {errors.name && <ErrorText>{errors.name.message}</ErrorText>}
+          <FormRow>
+            <IoMdMail size={25} />
+            <Input type="text" placeholder="이메일" {...register('email')} />
+          </FormRow>
+          {errors.email && <ErrorText>{errors.email.message}</ErrorText>}
+          <SubmitLine>
+            <Button type="submit">가입하기</Button>
+            <Button onClick={goHome} style={{ marginRight: '0px' }}>
+              취소하기
+            </Button>
+          </SubmitLine>
+        </form>
+      </Wrapper>
+    </Container>
+  );
+};
+
+export default Registration;
 
 const Container = styled.div`
+  background-color: ${({ theme }) => theme.bgColor};
+  color: ${({ theme }) => theme.textColor};
 
-  background-color: ${({ theme }) => theme.bgColor}; 
-  color: ${({ theme }) => theme.textColor};         
-  
   padding: 20px;
 `;
 
@@ -30,7 +151,6 @@ const Wrapper = styled.div`
 `;
 
 const Title = styled.div`
-  
   font-size: 40px;
   font-weight: bold;
   margin-bottom: 50px;
@@ -42,10 +162,7 @@ const FormRow = styled.div`
   margin-bottom: 25px;
 `;
 
-const Label = styled.label`
-  width: 130px;
-  font-weight: bold;
-`;
+
 
 const Input = styled.input`
   flex: 1;
@@ -57,135 +174,29 @@ const Input = styled.input`
   font-size: 15px;
 `;
 
-const Warning = styled.div`
-  margin-left: 50px;
-  color: red;
-  font-size: 16px;
-`;
-
-const IdButton = styled.button`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100px;
-  height: 35px;
-  border: 1px solid black;
-  border-radius: 0;
-`
-
 const SubmitLine = styled.div`
   margin-top: 30px;
   gap: 20px;
-`
+`;
 
 const Button = styled.button`
   margin-right: 10px;
-  width: 80px;
+  width: 100px;
   border: 0.5px solid black;
   border-radius: 0;
-`
+`;
 
-const Registration = () => {
-  const [id, setId] = useState('');
-  const [password, setPassword] = useState('');
-  const [password2, setPassword2] = useState('');
-  const [email, setEmail] = useState('');
-  const [showIdWarning, setShowIdWarning] = useState(false);
-  const [showPasswordWarning, setShowPasswordWarning] = useState(false);
-  const [showPasswordWarning2, setShowPasswordWarning2] = useState(false);
-  const [showEmailWarning, setShowEmailWarning] = useState(false);
+const ErrorText = styled.p`
+  color: red;
+  font-size: 12px;
+  margin-top: 6px;
+`;
 
-  const idCheck = (e) => {
-    const value = e.target.value;
-    setId(value);
-    setShowIdWarning(value.length < 5);
-  };
-
-  const passwordCheck = (e) => {
-    const value = e.target.value;
-    setPassword(value);
-
-    const isValidPassword =
-      value.length >= 8 &&
-      /[0-9]/.test(value) &&
-      /[a-zA-Z]/.test(value) &&
-      /[!@#$%^&*(),.?":{}|<>]/.test(value);
-
-    setShowPasswordWarning(!isValidPassword);
-  };
-
-  const passwordCheck2 = (e) => {
-    const value = e.target.value;
-    setPassword2(value);
-
-    if(password !== value){
-      setShowPasswordWarning2(true);
-    } else {
-      setShowPasswordWarning2(false);
-    }
-  };
-
-  const emailCheck = (e) => {
-    const value = e.target.value;
-    setEmail(value);
-    
-    const isValidEmail = (email) => {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailRegex.test(email);
-    };
-    
-    setShowEmailWarning(!isValidEmail(value));
-  }
-
-  const navigator = useNavigate();
-
-  const goHome = () => {
-    navigator('/');
-  }
-
-  return (
-    <Container>
-      <Wrapper>
-        <Title>회원가입</Title>
-        {showIdWarning && <Warning >*아이디는 최소 5자 이상이어야 합니다.</Warning>}
-        <FormRow>
-          <IoPersonCircle size={25}/>
-          <Input value={id} onChange={idCheck} placeholder='아이디(최소 5자~20자)'/>
-          
-        </FormRow>
-
-        {showPasswordWarning && <Warning style={{marginLeft:'135px'}}>*8자 이상 숫자와 문자, 특수문자를 포함해야 합니다.</Warning>}
-        <FormRow>
-          <RiLockPasswordFill size={25} />
-          <Input type="password" value={password} onChange={passwordCheck} placeholder='비밀번호' />
-        </FormRow>
-
-        {showPasswordWarning2 && <Warning style={{marginLeft: '0px'}}>*비밀번호가 일치하지 않습니다.</Warning>}
-        <FormRow>
-          <RiLockPasswordFill size={25} />
-          <Input type="password" value={password2} onChange={passwordCheck2} placeholder='비밀번호 확인'/>
-        </FormRow>
-
-        <FormRow>
-          <FaUser size={25}/>
-          <Input placeholder='이름' />
-        </FormRow>
-        
-        {showEmailWarning && <Warning style={{marginLeft: '0px'}}>*이메일 주소를 확인하세요.</Warning>}
-        <FormRow>
-          <IoMdMail  size={25}/>
-          <Input placeholder='이메일' onChange={emailCheck}/>
-        </FormRow>
-
-        
-        <SubmitLine >
-          <Button >제출</Button>
-          <Button onClick={goHome}>취소</Button>
-        </SubmitLine>
-        
-      </Wrapper>
-    </Container>
-  );
-};
-
-export default Registration;
+const DuplicateIdButton = styled.button`
+  width: 100px;
+  height: 50px;
+  border-radius: 0px;
+  border-right: 0.5px solid black;
+  border-top: 0.5px solid black;
+  border-bottom: 0.5px solid black;
+`;
