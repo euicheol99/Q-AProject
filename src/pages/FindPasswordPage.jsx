@@ -1,7 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaUserAlt } from 'react-icons/fa';
-import { IoMdMail } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom';
+
+const FindPasswordPage = () => {
+  const [userId,setUserId] = useState();
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    navigate(`/passwordresult/${userId}`);
+  }
+
+  return (
+    <Container>
+      <Wrapper>
+        <form onSubmit={handleSubmit}>
+          <Title>비밀번호 찾기</Title>
+          <InputLine>
+            <SecondLine>
+              <FaUserAlt style={{ marginRight: '10px' }} size={40} />
+              <Input placeholder="아이디를 입력하세요." onChange={(e) => setUserId(e.target.value)}/>
+            </SecondLine>
+            <Button type='submit'>비밀번호 찾기</Button>
+          </InputLine>
+        </form>
+      </Wrapper>
+    </Container>
+  );
+};
+
+export default FindPasswordPage;
 
 const Container = styled.div`
   background-color: ${({ theme }) => theme.bgColor};
@@ -61,22 +90,3 @@ const Button = styled.button`
     color: white;
   }
 `;
-
-const FindPasswordPage = () => {
-  return (
-    <Container>
-      <Wrapper>
-        <Title>비밀번호 찾기</Title>
-        <InputLine>
-          <SecondLine>
-            <FaUserAlt style={{ marginRight: '10px' }} size={40} />
-            <Input placeholder="아이디를 입력하세요." />
-          </SecondLine>
-          <Button>비밀번호 찾기</Button>
-        </InputLine>
-      </Wrapper>
-    </Container>
-  );
-};
-
-export default FindPasswordPage;

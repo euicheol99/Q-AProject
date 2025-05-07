@@ -15,31 +15,32 @@ const commonFont = `'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif`;
 
 const PostForm = () => {
   const navigate = useNavigate();
-    const {
-      register,
-      handleSubmit,
-      reset,
-      trigger, 
-      getValues,
-      formState: { errors },
-    } = useForm({
-      resolver: yupResolver(schema),
-      mode: 'onSubmit',
-    });
-  
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    trigger, 
+    getValues,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+    mode: 'onSubmit',
+  });
+
   const userStr = sessionStorage.getItem('loginUser');
-  const user = JSON.parse(userStr);  
-  const userId = user.userId;
-    
+  const user = userStr ? JSON.parse(userStr) : null;
+  const userId = user?.userId;
+
   useEffect(() => {
-    if (!userStr){
-      alert('로그인이 필요합니다.')
+    if (!user) {
+      alert('로그인이 필요합니다.');
       navigate('/login');
     }
-  },[])
+  }, [user, navigate]);
 
   const onSubmit = async () => {
-    const isValid = await trigger(); // 유효성 수동 검사
+    const isValid = await trigger();
     if (!isValid) {
       const { title, content, stack } = getValues();
       if (!title) alert('제목을 입력하세요.');
@@ -47,13 +48,13 @@ const PostForm = () => {
       else if (!content) alert('내용을 입력하세요.');
       return;
     }
-  
+
     const postsRes = await fetch('http://localhost:3001/posts');
     const posts = await postsRes.json();
-  
+
     const nextId = posts.length > 0 ? Math.max(...posts.map(p => p.id)) + 1 : 1;
     const today = new Date().toISOString().split('T')[0];
-  
+
     const newPost = {
       id: nextId,
       title: getValues('title'),
@@ -62,13 +63,13 @@ const PostForm = () => {
       userId,
       createdAt: today,
     };
-  
+
     const res = await fetch('http://localhost:3001/posts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newPost),
     });
-  
+
     if (res.ok) {
       alert('작성 완료!');
       reset();
@@ -77,16 +78,19 @@ const PostForm = () => {
       alert('작성 실패');
     }
   };
+
+  // userId 없으면 폼 렌더링 막기
+  if (!userId) return null;
+
   return (
     <Container>
       <Wrapper>
-        <h2>
-          질문작성하기
-        </h2>
+        <h2>질문작성하기</h2>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Title type='text' placeholder='제목을 입력하세요.' {...register('title')}/>
+          <Title type="text" placeholder="제목을 입력하세요." {...register('title')} />
           <SelectLine>
-            작성자<Writer value={userId} {...register('userId')} readOnly/>
+            작성자
+            <Writer value={userId} {...register('userId')} readOnly />
             <Select {...register('stack')}>
               <option value="">카테고리</option>
               <option value="자바">자바</option>
@@ -97,18 +101,24 @@ const PostForm = () => {
               <option value="JSP">JSP</option>
             </Select>
           </SelectLine>
-          <Content type='text' placeholder= '내용을 입력하세요.' {...register('content')}/>
+          <Content
+            type="text"
+            placeholder="내용을 입력하세요."
+            {...register('content')}
+          />
           <ButtonLine>
-            <Button type='submit'>제출하기</Button>
-            <Button type='button' onClick={() => navigate('/')}>취소하기</Button>
+            <Button type="submit">작성하기</Button>
+            <Button type="button" onClick={() => navigate('/')}>
+              취소하기
+            </Button>
           </ButtonLine>
         </form>
       </Wrapper>
     </Container>
-  )
-}
+  );
+};
 
-export default PostForm
+export default PostForm;
 
 const Container = styled.div`
   background-color: ${({ theme }) => theme.bgColor};
@@ -118,12 +128,13 @@ const Container = styled.div`
 `;
 
 const Wrapper = styled.div`
-  display: flex; 
+  display: flex;
   flex-direction: column;
   align-items: center;
   width: 80vw;
   border: 1px solid black;
   margin: 0 auto;
+  margin-top: 50px;
 `;
 
 const Title = styled.input`
@@ -132,7 +143,7 @@ const Title = styled.input`
   font-size: 20px;
   padding-left: 10px;
   margin-bottom: 20px;
-`
+`;
 
 const Content = styled.textarea`
   justify-content: flex-start;
@@ -144,38 +155,39 @@ const Content = styled.textarea`
   padding-top: 10px;
   padding-left: 10px;
   resize: none;
-`
+`;
+
 const SelectLine = styled.div`
   display: flex;
   justify-content: flex-start;
-  align-items: center ;
+  align-items: center;
   font-size: 20px;
   width: 50vw;
   height: 5vh;
   margin-bottom: 20px;
-  
-`
+`;
+
 const Writer = styled.input`
   font-size: 16px;
   width: 20vw;
   height: 5vh;
   margin-right: 30px;
   margin-left: 10px;
-`
+`;
+
 const Select = styled.select`
   font-size: 16px;
   height: 5vh;
-`
+`;
 
 const ButtonLine = styled.div`
   margin-top: 10px;
   margin-bottom: 30px;
-`
+`;
+
 const Button = styled.button`
   margin-right: 10px;
   width: 100px;
   border: 0.5px solid black;
   border-radius: 0;
 `;
-
-
