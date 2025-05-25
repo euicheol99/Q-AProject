@@ -10,14 +10,14 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 const schema = yup.object({
-  userId: yup.string().min(5, '아이디는 5자 이상이어야 합니다.').required('아이디를 입력하세요.'),
+  member_id: yup.string().min(5, '아이디는 5자 이상이어야 합니다.').required('아이디를 입력하세요.'),
   name: yup.string().required('이름은 필수입니다.'),
   password: yup
     .string()
     .min(7, '비밀번호는 7자 이상이어야 합니다.')
     .max(15, '비밀번호는 15자 이하여야 합니다.')
     .required('비밀번호를 입력하세요.'),
-  confirmPassword: yup
+  Password: yup
     .string()
     .oneOf([yup.ref('password'), null], '비밀번호가 일치하지 않습니다.')
     .required('비밀번호 확인을 입력하세요.'),
@@ -38,45 +38,47 @@ const Registration = () => {
   });
 
   const checkDuplicateId = async () => {
-    const id = getValues('userId');
+    const id = getValues('member_id');
   
     if (!id || id.length < 5) {
-      setError('userId', { message: '5자 이상 입력 후 중복확인을 눌러주세요.' });
+      setError('member_id', { message: '5자 이상 입력 후 중복확인을 눌러주세요.' });
       return;
     }
   
     try {
-      const res = await fetch(`http://localhost:3001/users?userId=${id}`);
+      const res = await fetch(`http://localhost:8889/api/members/${id}`);
       const data = await res.json();
   
       const isDuplicate = data.length > 0;
   
       if (isDuplicate) {
-        setError('userId', { message: '이미 사용 중인 아이디입니다.' });
+        setError('member_id', { message: '이미 사용 중인 아이디입니다.' });
       } else {
-        clearErrors('userId');
+        clearErrors('member_id');
         alert('사용 가능한 아이디입니다!');
       }
     } catch (err) {
-      setError('userId', { message: '서버 요청 실패' });
+      setError('member_id', { message: '서버 요청 실패' });
     }
   };
   
 
   const onSubmit = async (data) => {
-    const res = await fetch('http://localhost:3001/users', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+  const { confirmPassword, ...submitData } = data; 
 
-    if (res.ok) {
-      alert('회원가입 완료!');
-      navigator('/');
-    } else {
-      alert('회원가입 실패');
-    }
-  };
+  const res = await fetch('http://localhost:8889/api/members', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(submitData),
+  });
+
+  if (res.ok) {
+    alert('회원가입 완료!');
+    navigator('/');
+  } else {
+    alert('회원가입 실패');
+  }
+};
 
   const navigator = useNavigate();
 
@@ -91,10 +93,10 @@ const Registration = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormRow>
             <IoPersonCircle size={25} />
-            <Input type="text" placeholder="아이디(최소 5자~20자)" {...register('userId')} />
+            <Input type="text" placeholder="아이디(최소 5자~20자)" {...register('member_id')} />
             <DuplicateIdButton onClick={checkDuplicateId}>중복체크</DuplicateIdButton>
           </FormRow>
-          {errors.userId && <ErrorText>{errors.userId.message}</ErrorText>}
+          {errors.member_id && <ErrorText>{errors.member_id.message}</ErrorText>}
           <FormRow>
             <RiLockPasswordFill size={25} />
             <Input type="password" placeholder="비밀번호" {...register('password')} />
@@ -102,7 +104,7 @@ const Registration = () => {
           {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
           <FormRow>
             <RiLockPasswordFill size={25} />
-            <Input type="password" placeholder="비밀번호 확인"  />
+            <Input type="password" placeholder="비밀번호 확인" {...register('Password')} />
           </FormRow>
           {errors.confirmPassword && <ErrorText>{errors.confirmPassword.message}</ErrorText>}
           <FormRow>
