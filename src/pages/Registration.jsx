@@ -104,7 +104,11 @@ const Registration = () => {
           {errors.password && <ErrorText>{errors.password.message}</ErrorText>}
           <FormRow>
             <RiLockPasswordFill size={25} />
+<<<<<<< HEAD
             <Input type="password" placeholder="비밀번호 확인" {...register('Password')} />
+=======
+            <Input type="password" placeholder="비밀번호 확인" {...register('confirmPassword')} />
+>>>>>>> 1c51f503927b54cfbd6aa4458092fbf48210a8a4
           </FormRow>
           {errors.confirmPassword && <ErrorText>{errors.confirmPassword.message}</ErrorText>}
           <FormRow>

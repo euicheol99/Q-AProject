@@ -17,6 +17,8 @@ import Header from './components/Header';
 import GlobalStyle from './GlobalStyle';
 import { darkTheme, lightTheme } from './themes';
 import useUserStore from './store/UserStore';
+import PasswordResult from './pages/PasswordResult';
+import IdResult from './pages/IdResult';
 
 function App() {
   const [isDark, setIsDark] = useState(false);
@@ -45,6 +47,8 @@ function App() {
           <Route path="/post/:id" element={<PostDetail />} />
           <Route path="/user/:id" element={<UserDetail />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/passwordresult/:userId" element={<PasswordResult />} />
+          <Route path="/idresult/:name" element={<IdResult />} />
         </Routes>
       </Router>
     </ThemeProvider>

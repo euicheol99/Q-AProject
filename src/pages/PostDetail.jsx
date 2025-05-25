@@ -161,6 +161,7 @@ const PostDetail = () => {
               value={commentText} 
               onChange={(e) => setCommentText(e.target.value)} 
               placeholder="댓글을 입력하세요"
+              style={{fontFamily: `${commonFont}`}}
             />
             <Button onClick={handleAddComment} style={{height: '80px', marginRight:'0px', fontSize:'14px'}}>댓글등록</Button>
           </CommentInputArea>
@@ -290,4 +291,5 @@ const CommentDate = styled.div`
 
 const Comment = styled.div`
   padding-left: 10px;
+  font-family: ${commonFont};
 `

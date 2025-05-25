@@ -1,8 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaUserAlt } from 'react-icons/fa';
 import { IoMdMail } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
+
+
+
+const FindIdPage = () => {
+  const navigator = useNavigate();
+  const [name,setName] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    navigator(`/idresult/${name}`)
+  }
+
+  return (
+    <Container>
+      <Wrapper>
+        <form onSubmit={handleSubmit}>
+          <Title>아이디 찾기</Title>
+          <InputLine>
+            <SecondLine>
+              <FaUserAlt style={{ marginRight: '10px' }} size={40} />
+              <Input placeholder="이름을 입력하세요." onChange={(e) => setName(e.target.value)} />
+            </SecondLine>
+            <Button type='submit'>아이디 찾기</Button>
+            <Button onClick={() => navigator('/findpassword')}>비밀번호 찾기</Button>
+          </InputLine>
+        </form>
+      </Wrapper>
+    </Container>
+  );
+};
+
+export default FindIdPage;
 
 const Container = styled.div`
   background-color: ${({ theme }) => theme.bgColor};
@@ -12,7 +44,7 @@ const Container = styled.div`
 const Wrapper = styled.div`
   background: #e9e9e9;
   width: 40vw;
-  height: 55vh;
+  height: 45vh;
   border: 1px solid black;
 `;
 
@@ -62,32 +94,3 @@ const Button = styled.button`
     color: white;
   }
 `;
-
-const FindIdPage = () => {
-  const navigator = useNavigate();
-
-  const handlePasswordFind = () => {
-    navigator('/findpassword');
-  };
-  return (
-    <Container>
-      <Wrapper>
-        <Title>아이디 찾기</Title>
-        <InputLine>
-          <SecondLine>
-            <FaUserAlt style={{ marginRight: '10px' }} size={40} />
-            <Input placeholder="이름을 입력하세요." />
-          </SecondLine>
-          <SecondLine>
-            <IoMdMail style={{ marginRight: '10px' }} size={40} />
-            <Input placeholder="이메일을 입력하세요." />
-          </SecondLine>
-          <Button>아이디 찾기</Button>
-          <Button onClick={handlePasswordFind}>비밀번호 찾기</Button>
-        </InputLine>
-      </Wrapper>
-    </Container>
-  );
-};
-
-export default FindIdPage;
