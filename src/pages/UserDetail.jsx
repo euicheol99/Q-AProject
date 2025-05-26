@@ -23,9 +23,9 @@ const schema = yup.object({
 
 const UserDetail = () => {
   const navigate = useNavigate();
-  const userStr = sessionStorage.getItem('loginUser');
-  const user = userStr ? JSON.parse(userStr) : null;
-  const id = user.id;
+  const memberStr = sessionStorage.getItem('loginMember');
+  const member = memberStr ? JSON.parse(memberStr) : null;
+  const id = member.memberId;
   const {
     register,
     handleSubmit,
@@ -40,20 +40,20 @@ const UserDetail = () => {
       alert('로그인이 필요합니다.');
       navigate('/login');
     } else {
-      setValue('userId', user.userId);
-      setValue('password', user.password);
-      setValue('confirmPassword', user.password);
-      setValue('name', user.name);
-      setValue('email', user.email);
+      setValue('memberId', member.memberId);
+      setValue('password', member.password);
+      setValue('confirmPassword', member.password);
+      setValue('name', member.name);
+      setValue('email', member.email);
     }
-  }, [navigate, setValue, user, userStr]);
+  }, [navigate, setValue, member, memberStr]);
 
   const onSubmit = async (data) => {
     try {
-      await axios.put(`http://localhost:3001/users/${id}`, data);
+      await axios.put(`http://localhost:8889/api/members/${id}`, data);
   
-      const response = await axios.get(`http://localhost:3001/users/${id}`);
-      sessionStorage.setItem('loginUser', JSON.stringify(response.data));
+      const response = await axios.get(`http://localhost:8889/api/members/${id}`);
+      sessionStorage.setItem('loginMember', JSON.stringify(response.data));
   
       alert('정보가 수정되었습니다.');
       navigate('/');
@@ -75,7 +75,7 @@ const UserDetail = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormRow>
             <IoPersonCircle size={25} />
-            <Input type="text" {...register('userId')} readOnly />
+            <Input type="text" {...register('memberId')} readOnly />
           </FormRow>
           <FormRow>
             <RiLockPasswordFill size={25} />
