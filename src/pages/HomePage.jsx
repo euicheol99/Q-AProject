@@ -142,6 +142,7 @@ const PostTop = styled.div`
   font-size: 20px;
   height: 50px;
   align-items: center;
+  background: #ccc;
 `;
 
 const PostColumn = styled.div`

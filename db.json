@@ -11,7 +11,7 @@
       "userId": "ronald",
       "password": "dmlcjf6265",
       "confirmPassword": "dmlcjf6265",
-      "name": "정의철",
+      "name": "정의철이요",
       "email": "rororo@naver.com",
       "id": "4996"
     },
@@ -30,6 +30,22 @@
       "confirmPassword": "dmlcjf6265",
       "name": "개발자1",
       "email": "programmer@naver.com"
+    },
+    {
+      "id": "48ab",
+      "userId": "user05",
+      "password": "user055",
+      "confirmPassword": "user055",
+      "name": "유저5",
+      "email": "user5@naver.com"
+    },
+    {
+      "id": "0ced",
+      "userId": "user02",
+      "password": "12345678",
+      "confirmPassword": "12345678",
+      "name": "저에요",
+      "email": "rororororo@naver.com"
     }
   ],
   "posts": [
@@ -47,14 +63,6 @@
       "userId": "ronald",
       "stack": "자바",
       "content": "자바를 어떻게 잡아야할까요?",
-      "createdAt": "2025-05-06"
-    },
-    {
-      "id": "3",
-      "title": "데이터베이스 질문이 있습니다.",
-      "content": "과연 정규화란 무엇일까요?",
-      "stack": "데이터베이스",
-      "userId": "ronald",
       "createdAt": "2025-05-06"
     },
     {
@@ -111,6 +119,14 @@
       "content": "궁금합니다.",
       "stack": "CSS",
       "userId": "user01",
+      "createdAt": "2025-05-07"
+    },
+    {
+      "id": 11,
+      "title": "자바질문이요",
+      "content": "질문",
+      "stack": "자바",
+      "userId": "ronald",
       "createdAt": "2025-05-07"
     }
   ],
@@ -177,6 +193,13 @@
       "userId": "ronald",
       "createdAt": "2025-05-07",
       "content": "React는 JavaScript로 만든 라이브러리, Facebook(메타)이 만든 UI 라이브러리이며, JavaScript 위에서 동작합니다.복잡한 UI를 효율적으로 만들고 관리할 수 있게 도와주는 도구입니다."
+    },
+    {
+      "id": "ee97",
+      "postId": 8,
+      "userId": "ronald",
+      "createdAt": "2025-05-07",
+      "content": "하이요"
     }
   ]
 }
