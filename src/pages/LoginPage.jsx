@@ -4,35 +4,35 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import useUserStore from '../store/UserStore';
 
 const LoginPage = () => {
-  const [userId, setUserId] = useState('');
+  const [memberId, setMemberId] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const [loginCheck, setLoginCheck] = useState(false); 
+  const { setUser } = useUserStore();
 
   const handleLogin = async (e) => {
     
   
     try {
-      const response = await axios.get('http://localhost:8889/members', {
-        params: {
-          userId,
-          password,
-        },
+      const response = await axios.post('http://localhost:8889/api/members/login', {
+        member_id: memberId,
+        password: password,
       });
   
-      const users = response.data;
-  
-      if (users.length > 0) {
-        const user = users[0];
-  
-        sessionStorage.setItem("userId", user.userId);
+    
+      const user = response.data;
+      if (user) {
+        sessionStorage.setItem("member_id", user.member_id);
         sessionStorage.setItem("email", user.email);
         sessionStorage.setItem("name", user.name);
         sessionStorage.setItem("id", user.id);
         sessionStorage.setItem("loginUser", JSON.stringify(user)); // 전체 저장
   
+        setUser(user);
+
         setLoginCheck(false);
         navigate('/');
       } else {
@@ -50,7 +50,7 @@ const LoginPage = () => {
         <Title>로그인</Title>
         <form >
           <InputLine>
-            <Input type='text' placeholder="아이디를 입력해주세요." onChange={(e) => setUserId(e.target.value)} />
+            <Input type='text' placeholder="아이디를 입력해주세요." onChange={(e) => setMemberId(e.target.value)} />
             <Input type='password' placeholder="비밀번호를 입력해주세요." onChange={(e) => setPassword(e.target.value)} />
             {loginCheck && (<label style={{color:"red"}}> 아이디 혹은 비밀번호가 틀렸습니다.</label> )}
           </InputLine>

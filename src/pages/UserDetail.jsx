@@ -9,6 +9,7 @@ import { RiLockPasswordFill } from 'react-icons/ri';
 import { FaUser } from 'react-icons/fa';
 import { IoMdMail } from 'react-icons/io';
 import axios from 'axios';
+import useUserStore from '../store/UserStore';
 import { useParams } from 'react-router-dom';
 
 const schema = yup.object({
@@ -21,11 +22,13 @@ const schema = yup.object({
   email: yup.string().email('올바른 이메일 형식이 아닙니다.').required('이메일을 입력하세요.'),
 });
 
+
 const UserDetail = () => {
+  const {setUser} = useUserStore();
   const navigate = useNavigate();
-  const memberStr = sessionStorage.getItem('loginMember');
+  const memberStr = sessionStorage.getItem('loginUser');
   const member = memberStr ? JSON.parse(memberStr) : null;
-  const id = member.memberId;
+  const id = member.member_id;
   const {
     register,
     handleSubmit,
@@ -36,11 +39,11 @@ const UserDetail = () => {
   });
 
   useEffect(() => {
-    if (!userStr) {
+    if (!memberStr) {
       alert('로그인이 필요합니다.');
       navigate('/login');
     } else {
-      setValue('memberId', member.memberId);
+      setValue('member_id', member.member_id);
       setValue('password', member.password);
       setValue('confirmPassword', member.password);
       setValue('name', member.name);
@@ -49,19 +52,25 @@ const UserDetail = () => {
   }, [navigate, setValue, member, memberStr]);
 
   const onSubmit = async (data) => {
-    try {
-      await axios.put(`http://localhost:8889/api/members/${id}`, data);
-  
-      const response = await axios.get(`http://localhost:8889/api/members/${id}`);
-      sessionStorage.setItem('loginMember', JSON.stringify(response.data));
-  
-      alert('정보가 수정되었습니다.');
-      navigate('/');
-    } catch (error) {
-      console.error('수정 실패:', error);
-      alert('수정에 실패했습니다.');
-    }
-  };
+  try {
+    // confirmPassword 제거
+    const { confirmPassword, ...userData } = data;
+
+    await axios.put(`http://localhost:8889/api/members/${id}`, userData);
+
+    const response = await axios.get(`http://localhost:8889/api/members/${id}`);
+    const updateUser = response.data;
+
+    sessionStorage.setItem('loginUser', JSON.stringify(updateUser));
+    setUser(updateUser);
+
+    alert('정보가 수정되었습니다.');
+    navigate('/');
+  } catch (error) {
+    console.error('수정 실패:', error);
+    alert('수정에 실패했습니다.');
+  }
+};
   
 
   const goHome = () => {
@@ -75,7 +84,7 @@ const UserDetail = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormRow>
             <IoPersonCircle size={25} />
-            <Input type="text" {...register('memberId')} readOnly />
+            <Input type="text" {...register('member_id')} readOnly />
           </FormRow>
           <FormRow>
             <RiLockPasswordFill size={25} />

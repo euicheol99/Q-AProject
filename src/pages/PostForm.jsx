@@ -30,7 +30,7 @@ const PostForm = () => {
 
   const userStr = sessionStorage.getItem('loginUser');
   const user = userStr ? JSON.parse(userStr) : null;
-  const userId = user?.userId;
+  const userId = user?.member_id;
 
   useEffect(() => {
     if (!user) {
@@ -49,22 +49,15 @@ const PostForm = () => {
       return;
     }
 
-    const postsRes = await fetch('http://localhost:3001/posts');
-    const posts = await postsRes.json();
-
-    const nextId = posts.length > 0 ? Math.max(...posts.map(p => p.id)) + 1 : 1;
-    const today = new Date().toISOString().split('T')[0];
-
+    
     const newPost = {
-      id: nextId,
-      title: getValues('title'),
+      post_title: getValues('title'),
       content: getValues('content'),
       stack: getValues('stack'),
-      userId,
-      createdAt: today,
+      member_id: userId,
     };
 
-    const res = await fetch('http://localhost:3001/posts', {
+    const res = await fetch('http://localhost:8889/api/posts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newPost),

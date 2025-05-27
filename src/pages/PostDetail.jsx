@@ -17,19 +17,20 @@ const PostDetail = () => {
   useEffect(() => {
     const fetchPostAndComments = async () => {
       try {
-        const res = await axios.get(`http://localhost:3001/posts/${id}`);
+        const res = await axios.get(`http://localhost:8889/api/posts/${id}`);
+        console.log('받은 게시글 데이터:', res.data);
         setPost(res.data);
 
         const userStr = sessionStorage.getItem('loginUser');
         if (userStr) {
           const user = JSON.parse(userStr);
-          if (user.userId === res.data.userId) {
+          if (user.member_id === res.data.member_id) {
             setIsAuthor(true);
           }
         }
 
        
-        const commentRes = await axios.get(`http://localhost:3001/comments?postId=${id}`);
+        const commentRes = await axios.get(`http://localhost:8889/api/comments?post_id=${id}`);
         setComments(commentRes.data);
       } catch (err) {
         console.error('데이터를 불러오는 데 실패했습니다:', err);
@@ -49,15 +50,14 @@ const PostDetail = () => {
 
     const user = JSON.parse(userStr);
     const newComment = {
-      postId: parseInt(id),
-      userId: user.userId,
-      createdAt: today,
+      post_id: parseInt(id),
+      member_id: user.member_id,
       content: commentText,
     };
 
     try {
-      await axios.post(`http://localhost:3001/comments`, newComment);
-      const updatedComments = await axios.get(`http://localhost:3001/comments?postId=${id}`);
+      await axios.post(`http://localhost:8889/api/comments`, newComment);
+      const updatedComments = await axios.get(`http://localhost:8889/api/comments?post_id=${id}`);
       setComments(updatedComments.data);
       setCommentText('');
     } catch (err) {
@@ -75,13 +75,13 @@ const PostDetail = () => {
           <h2>게시판 상세보기</h2>
           <Title 
             type="text" 
-            value={post.title} 
+            value={post.post_title} 
             readOnly={!isAuthor}
             onChange={(e) => isAuthor && setPost({...post, title: e.target.value})}
           />
           <SelectLine>
             작성자
-            <Writer value={post.userId} readOnly />
+            <Writer value={post.member_id} readOnly />
             <Select 
               value={post.stack} 
               disabled={!isAuthor}
@@ -106,7 +106,7 @@ const PostDetail = () => {
                 <Button 
                   type="button" 
                   onClick={() => {
-                    axios.put(`http://localhost:3001/posts/${id}`, post)
+                    axios.put(`http://localhost:8889/api/posts/${id}`, post)
                       .then(() => {
                         alert('수정되었습니다.');
                         navigate('/');
@@ -123,7 +123,7 @@ const PostDetail = () => {
                   type="button" 
                   onClick={() => {
                     if (window.confirm('정말 삭제하시겠습니까?')) {
-                      axios.delete(`http://localhost:3001/posts/${id}`)
+                      axios.delete(`http://localhost:8889/api/posts/${id}`)
                         .then(() => {
                           alert('삭제되었습니다.');
                           navigate('/');
@@ -146,10 +146,10 @@ const PostDetail = () => {
         <CommentSection>
           <h3>댓글</h3>
           {comments.map((comment) => (
-            <div key={comment.id}>
-              <CommentTop key={comment.id}>
-                <UserInfo >{comment.userId}</UserInfo> 
-                <CommentDate>{comment.createdAt}</CommentDate>
+            <div key={comment.comment_id}>
+              <CommentTop key={comment.comment_id}>
+                <UserInfo >{comment.member_id}</UserInfo> 
+                <CommentDate>{comment.create_date}</CommentDate>
               </CommentTop>
               <CommentBottom>
                 <Comment>{comment.content}</Comment>

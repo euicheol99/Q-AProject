@@ -14,15 +14,17 @@ const HomePage = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await axios.get('http://localhost:8889/posts');
+        const res = await axios.get('http://localhost:8889/api/posts');
         // const sortedPosts = res.data.sort((a, b) => b.id - a.id);
-        setPosts(res);
+        setPosts(res.data);
       } catch (error) {
         console.error('게시물을 가져오는 데 오류가 발생했습니다:', error);
       }
     };
     fetchPosts();
   }, []);
+
+  
 
   const handlePost = (id) => {
     navigator(`/post/${id}`);
@@ -33,7 +35,7 @@ const HomePage = () => {
   };
 
   const filteredPosts = posts.filter((post) => {
-    const titleMatch = post.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const titleMatch = post.post_title.toLowerCase().includes(searchTerm.toLowerCase());
     const stackMatch = selectedStack === '전체' || post.stack === selectedStack;
     return titleMatch && stackMatch;
   });
@@ -71,7 +73,7 @@ const HomePage = () => {
       </PostTop>
 
       {filteredPosts.map((post) => (
-        <PostLine key={post.id} onClick={() => handlePost(post.id)}>
+        <PostLine key={post.id} onClick={() => handlePost(post.post_id)}>
           <Post style={{ width: '70px' }}>{post.post_id}</Post>
           <Post style={{ width: '160px' }}>{post.stack}</Post>
           <Post style={{ width: '450px' }}>{post.post_title}</Post>
