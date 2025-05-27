@@ -14,9 +14,9 @@ const HomePage = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await axios.get('http://localhost:3001/posts');
-        const sortedPosts = res.data.sort((a, b) => b.id - a.id);
-        setPosts(sortedPosts);
+        const res = await axios.get('http://localhost:8889/posts');
+        // const sortedPosts = res.data.sort((a, b) => b.id - a.id);
+        setPosts(res);
       } catch (error) {
         console.error('게시물을 가져오는 데 오류가 발생했습니다:', error);
       }
@@ -72,11 +72,11 @@ const HomePage = () => {
 
       {filteredPosts.map((post) => (
         <PostLine key={post.id} onClick={() => handlePost(post.id)}>
-          <Post style={{ width: '70px' }}>{post.id}</Post>
+          <Post style={{ width: '70px' }}>{post.post_id}</Post>
           <Post style={{ width: '160px' }}>{post.stack}</Post>
-          <Post style={{ width: '450px' }}>{post.title}</Post>
-          <Post style={{ width: '160px' }}>{post.userId}</Post>
-          <Post style={{ width: '180px' }}>{post.createdAt}</Post>
+          <Post style={{ width: '450px' }}>{post.post_title}</Post>
+          <Post style={{ width: '160px' }}>{post.member_id}</Post>
+          <Post style={{ width: '180px' }}>{post.created_date}</Post>
         </PostLine>
       ))}
 

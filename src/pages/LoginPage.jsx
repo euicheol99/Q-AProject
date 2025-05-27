@@ -15,7 +15,7 @@ const LoginPage = () => {
     
   
     try {
-      const response = await axios.get('http://localhost:3001/users', {
+      const response = await axios.get('http://localhost:8889/members', {
         params: {
           userId,
           password,
