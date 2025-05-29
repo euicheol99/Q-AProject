@@ -46,7 +46,6 @@ const PostDetail = () => {
       return;
     }
 
-    const today = new Date().toISOString().split('T')[0];
 
     const user = JSON.parse(userStr);
     const newComment = {
@@ -77,7 +76,7 @@ const PostDetail = () => {
             type="text" 
             value={post.post_title} 
             readOnly={!isAuthor}
-            onChange={(e) => isAuthor && setPost({...post, title: e.target.value})}
+            onChange={(e) => isAuthor && setPost({...post, post_title: e.target.value})}
           />
           <SelectLine>
             작성자
